@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Bullet Point Generator</title>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1371238492071252" crossorigin="anonymous"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,16 +18,32 @@
             margin: 10px;
             padding: 10px;
         }
-        textarea {
-            width: 80%;
-            height: 100px;
+        #output {
             margin-top: 20px;
+            white-space: pre-line;
+            font-weight: bold;
+        }
+        .limit-message {
+            font-size: 14px;
+            color: red;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
     <h1>Resume Bullet Point Generator</h1>
+
+    <!-- Google AdSense Ad Unit (Top of Page) -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-1371238492071252"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
     <label for="jobTitle">Job Title:</label>
     <input type="text" id="jobTitle" placeholder="Enter job title">
@@ -33,40 +53,56 @@
 
     <button onclick="generateBulletPoints()">Generate</button>
 
-    <h2>Generated Bullet Points:</h2>
-    <textarea id="output" readonly></textarea>
+    <p id="output"></p>
+    <p class="limit-message">You can generate up to <strong>three</strong> resume bullet points for free.</p>
+
+    <!-- Google AdSense Ad Unit (Below Content) -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-1371238492071252"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 
     <script>
+        let requestCount = localStorage.getItem("requestCount") || 0;
+
         async function generateBulletPoints() {
+            if (requestCount >= 3) {
+                document.getElementById("output").innerText = "Limit reached! Please try again later.";
+                return;
+            }
+
             const jobTitle = document.getElementById("jobTitle").value;
             const industry = document.getElementById("industry").value;
             const outputBox = document.getElementById("output");
 
-            outputBox.value = "Generating..."; // Show loading state
+            outputBox.innerText = "Generating...";
 
             try {
                 const response = await fetch("/.netlify/functions/generate-bullets", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ jobTitle, industry })
                 });
 
                 const data = await response.json();
-                console.log("Bullet Points Response:", data); // Debugging
+                console.log("Bullet Points Response:", data);
 
-                // Ensure the data is formatted correctly
                 if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
                     throw new Error("Invalid bullet point format");
                 }
 
-                // Display bullet points in the output box
-                outputBox.value = data.bullet_points.join("\n");
+                outputBox.innerText = data.bullet_points.join("\n");
 
+                requestCount++;
+                localStorage.setItem("requestCount", requestCount);
             } catch (error) {
                 console.error("Error:", error);
-                outputBox.value = "Failed to generate bullet points. Try again.";
+                outputBox.innerText = "Failed to generate bullet points. Try again.";
             }
         }
     </script>
