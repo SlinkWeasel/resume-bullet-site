@@ -1,32 +1,34 @@
-async function generateBulletPoints() {
-    const jobTitle = document.getElementById("jobTitle").value;
-    const industry = document.getElementById("industry").value;
-    const outputBox = document.getElementById("output");
+<script>
+    async function generateBulletPoints() {
+        const jobTitle = document.getElementById("jobTitle").value;
+        const industry = document.getElementById("industry").value;
+        const outputBox = document.getElementById("output");
 
-    outputBox.value = "Generating..."; // Show loading state
+        outputBox.value = "Generating..."; // Show loading state
 
-    try {
-        const response = await fetch("/.netlify/functions/generate-bullets", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ jobTitle, industry })
-        });
+        try {
+            const response = await fetch("/.netlify/functions/generate-bullets", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ jobTitle, industry })
+            });
 
-        const data = await response.json();
-        console.log("Bullet Points Response:", data); // Debugging
+            const data = await response.json();
+            console.log("Bullet Points Response:", data); // Debugging
 
-        // Ensure the data is formatted correctly
-        if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
-            throw new Error("Invalid bullet point format");
+            // Ensure the data is formatted correctly
+            if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
+                throw new Error("Invalid bullet point format");
+            }
+
+            // Display bullet points in the output box
+            outputBox.value = data.bullet_points.join("\n");
+
+        } catch (error) {
+            console.error("Error:", error);
+            outputBox.value = "Failed to generate bullet points. Try again.";
         }
-
-        // Display bullet points in the output box
-        outputBox.value = data.bullet_points.join("\n");
-
-    } catch (error) {
-        console.error("Error:", error);
-        outputBox.value = "Failed to generate bullet points. Try again.";
     }
-}
+</script>
