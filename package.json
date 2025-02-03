@@ -1,0 +1,13 @@
+{
+  "name": "resume-bullet-points",
+  "version": "1.0.0",
+  "description": "Resume Bullet Point Generator",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'Nothing to build'",
+    "start": "node netlify/functions/generate-bullets.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}
