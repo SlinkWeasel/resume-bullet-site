@@ -4,7 +4,14 @@
         const industry = document.getElementById("industry").value;
         const outputBox = document.getElementById("output");
 
-        outputBox.value = "Generating..."; // Show loading state
+        // Clear previous bullet points and show loading state
+        outputBox.value = "Generating...";
+
+        // Validate input fields
+        if (!jobTitle || !industry) {
+            outputBox.value = "Please enter both job title and industry.";
+            return;
+        }
 
         try {
             const response = await fetch("/.netlify/functions/generate-bullets", {
@@ -15,16 +22,20 @@
                 body: JSON.stringify({ jobTitle, industry })
             });
 
-            const data = await response.json();
-            console.log("Bullet Points Response:", data); // Debugging
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Bullet Points Response:", data); // Debugging
 
-            // Ensure the data is formatted correctly
-            if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
-                throw new Error("Invalid bullet point format");
+                // Ensure the data is formatted correctly
+                if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
+                    throw new Error("Invalid bullet point format");
+                }
+
+                // Display bullet points in the output box
+                outputBox.value = data.bullet_points.join("\n");
+            } else {
+                throw new Error("Failed to fetch bullet points");
             }
-
-            // Display bullet points in the output box
-            outputBox.value = data.bullet_points.join("\n");
 
         } catch (error) {
             console.error("Error:", error);
