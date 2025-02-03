@@ -6,33 +6,69 @@
     <title>Resume Bullet Point Generator</title>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1371238492071252" crossorigin="anonymous"></script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
-        input, button, textarea { margin: 10px; padding: 10px; font-size: 16px; }
-        textarea { width: 80%; height: 150px; resize: none; }
-        #copyButton { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        #copyButton:hover { background-color: #45a049; }
-        .limit-msg { color: red; font-weight: bold; margin-top: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+        }
+        #output {
+            margin-top: 20px;
+            font-weight: bold;
+            white-space: pre-line;
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            display: inline-block;
+            text-align: left;
+        }
+        .limit-message {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .copy-btn {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <h1>Resume Bullet Point Generator</h1>
-    <label>Job Title: <input type="text" id="jobTitle" placeholder="e.g., Software Engineer"></label>
-    <label>Industry: <input type="text" id="industry" placeholder="e.g., Technology"></label>
+    <label for="jobTitle">Job Title:</label>
+    <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
+    <label for="industry">Industry:</label>
+    <input type="text" id="industry" placeholder="e.g. Technology">
     <button onclick="generateBulletPoints()">Generate</button>
     
-    <h3>Generated Bullet Points:</h3>
-    <textarea id="output" readonly></textarea>
-    <br>
-    <button id="copyButton" onclick="copyToClipboard()">Copy to Clipboard</button>
-    <p class="limit-msg">You can generate up to <strong>three</strong> resume bullet points for free.</p>
+    <div id="output"></div>
+    <button class="copy-btn" onclick="copyToClipboard()">Copy to Clipboard</button>
+    
+    <p class="limit-message">You can use the generator up to <strong>three</strong> times for free.</p>
 
     <script>
+        let usageCount = localStorage.getItem("usageCount") || 0;
+
         async function generateBulletPoints() {
+            if (usageCount >= 3) {
+                document.getElementById("output").innerText = "You have reached your free limit of 3 uses.";
+                return;
+            }
+
             const jobTitle = document.getElementById("jobTitle").value;
             const industry = document.getElementById("industry").value;
             const outputBox = document.getElementById("output");
-            outputBox.value = "Generating...";
-            
+            outputBox.innerText = "Generating...";
+
             try {
                 const response = await fetch("/.netlify/functions/generate-bullets", {
                     method: "POST",
@@ -42,21 +78,22 @@
                 const data = await response.json();
                 
                 if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
-                    throw new Error("Invalid bullet point format");
+                    throw new Error("Invalid response format");
                 }
                 
-                outputBox.value = data.bullet_points.join("\n");
+                outputBox.innerText = data.bullet_points.join("\n");
+                localStorage.setItem("usageCount", ++usageCount);
             } catch (error) {
+                outputBox.innerText = "Failed to generate bullet points. Try again.";
                 console.error("Error:", error);
-                outputBox.value = "Failed to generate bullet points. Try again.";
             }
         }
-        
+
         function copyToClipboard() {
-            const outputBox = document.getElementById("output");
-            outputBox.select();
-            document.execCommand("copy");
-            alert("Bullet points copied to clipboard!");
+            const outputText = document.getElementById("output").innerText;
+            navigator.clipboard.writeText(outputText).then(() => {
+                alert("Bullet points copied to clipboard!");
+            });
         }
     </script>
 </body>
