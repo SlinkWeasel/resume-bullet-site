@@ -2,7 +2,7 @@ const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
     try {
-        const OPENAI_API_KEY = process.env.OPENAI_API_KEY; // Ensure this is set in Netlify
+        const OPENAI_API_KEY = process.env.OPENAI_API_KEY; 
 
         if (!OPENAI_API_KEY) {
             throw new Error("Missing OpenAI API Key");
@@ -32,11 +32,11 @@ exports.handler = async (event) => {
         });
 
         const data = await response.json();
-        console.log("OpenAI Response:", JSON.stringify(data));
+        console.log("OpenAI Raw Response:", JSON.stringify(data));
 
-        // Check if OpenAI returned valid data
-        if (!data.choices || !data.choices[0].message.content) {
-            throw new Error("Invalid response from OpenAI");
+        // Ensure OpenAI API returned a valid response
+        if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+            throw new Error("Invalid response from OpenAI. Response: " + JSON.stringify(data));
         }
 
         return {
@@ -52,4 +52,3 @@ exports.handler = async (event) => {
         };
     }
 };
-
