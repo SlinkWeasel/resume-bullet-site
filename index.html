@@ -1,28 +1,58 @@
-<script>
-    async function generateBulletPoints() {
-        const jobTitle = document.getElementById("jobTitle").value;
-        const industry = document.getElementById("industry").value;
-        const outputBox = document.getElementById("output");
-
-        // Clear previous bullet points and show loading state
-        outputBox.value = "Generating...";
-
-        // Validate input fields
-        if (!jobTitle || !industry) {
-            outputBox.value = "Please enter both job title and industry.";
-            return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Bullet Point Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
         }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+        }
+        textarea {
+            width: 80%;
+            height: 100px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
 
-        try {
-            const response = await fetch("/.netlify/functions/generate-bullets", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ jobTitle, industry })
-            });
+    <h1>Resume Bullet Point Generator</h1>
 
-            if (response.ok) {
+    <label for="jobTitle">Job Title:</label>
+    <input type="text" id="jobTitle" placeholder="Enter job title">
+
+    <label for="industry">Industry:</label>
+    <input type="text" id="industry" placeholder="Enter industry">
+
+    <button onclick="generateBulletPoints()">Generate</button>
+
+    <h2>Generated Bullet Points:</h2>
+    <textarea id="output" readonly></textarea>
+
+    <script>
+        async function generateBulletPoints() {
+            const jobTitle = document.getElementById("jobTitle").value;
+            const industry = document.getElementById("industry").value;
+            const outputBox = document.getElementById("output");
+
+            outputBox.value = "Generating..."; // Show loading state
+
+            try {
+                const response = await fetch("/.netlify/functions/generate-bullets", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ jobTitle, industry })
+                });
+
                 const data = await response.json();
                 console.log("Bullet Points Response:", data); // Debugging
 
@@ -33,13 +63,13 @@
 
                 // Display bullet points in the output box
                 outputBox.value = data.bullet_points.join("\n");
-            } else {
-                throw new Error("Failed to fetch bullet points");
-            }
 
-        } catch (error) {
-            console.error("Error:", error);
-            outputBox.value = "Failed to generate bullet points. Try again.";
+            } catch (error) {
+                console.error("Error:", error);
+                outputBox.value = "Failed to generate bullet points. Try again.";
+            }
         }
-    }
-</script>
+    </script>
+
+</body>
+</html>
