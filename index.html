@@ -3,63 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generate powerful resume bullet points instantly with our AI-powered resume bullet point generator. Perfect for job seekers looking to enhance their resumes.">
-    <meta name="keywords" content="resume bullet point generator, resume writing, job application, professional resume, AI resume generator">
+    <meta name="description" content="Generate powerful resume bullet points instantly with AI. Optimize your resume for any job title and industry. Free AI-powered resume builder.">
+    <meta name="keywords" content="resume bullet points, resume generator, AI resume, job application, resume writing, resume improvement, AI job help">
     <meta name="author" content="ResumeBulletPoints.com">
-    <title>Resume Bullet Point Generatorrrr | Free AI Resume Writer</title>
+    <meta property="og:title" content="Resume Bullet Point Generator - AI Powered">
+    <meta property="og:description" content="Instantly generate professional resume bullet points using AI. Make your resume stand out!">
+    <meta property="og:url" content="https://resumebulletpoints.com">
+    <meta property="og:type" content="website">
+    <title>Resume Bullet Point Generator | AI Resume Writer</title>
     
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1371238492071252" crossorigin="anonymous"></script>
-    
+
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
         }
-        input, button {
-            margin: 10px;
-            padding: 10px;
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
-        textarea {
-            width: 80%;
-            height: 100px;
+        h1 {
+            font-size: 28px;
+            color: #333;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+        input, button, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        input {
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #cccccc;
+        }
+        #output {
             display: block;
-            margin: 20px auto;
-            padding: 10px;
+            min-height: 100px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            text-align: left;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-size: 16px;
         }
-        .limit-message {
+        .limit-notice {
             color: red;
+            font-size: 14px;
             font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Resume Bullet Point Generator</h1>
-    <label for="jobTitle">Job Title:</label>
-    <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
-    <label for="industry">Industry:</label>
-    <input type="text" id="industry" placeholder="e.g. Technology">
-    <button onclick="generateBulletPoints()">Generate</button>
-    <button id="copyButton" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
-    <p class="limit-message">You can use the generator up to <strong>three</strong> times for free.</p>
-    <textarea id="output" readonly></textarea>
-    
-    <script>
-        let usageCount = localStorage.getItem("usageCount") || 0;
+
+    <div class="container">
+        <h1>AI Resume Bullet Point Generator</h1>
+        <p>Get professionally written resume bullet points tailored to your job title and industry.</p>
         
+        <label for="jobTitle"><b>Job Title:</b></label>
+        <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
+        
+        <label for="industry"><b>Industry:</b></label>
+        <input type="text" id="industry" placeholder="e.g. Technology">
+        
+        <button onclick="generateBulletPoints()">Generate</button>
+        <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
+        
+        <p class="limit-notice">⚠️ You can use the generator up to <b>three</b> times for free.</p>
+        
+        <textarea id="output" readonly></textarea>
+    </div>
+
+    <script>
+        let usageCount = localStorage.getItem('usageCount') || 0;
+
         async function generateBulletPoints() {
             if (usageCount >= 3) {
-                document.getElementById("output").value = "Limit reached. Upgrade for more access.";
+                document.getElementById('output').innerText = "You've reached the free limit of 3 requests.";
                 return;
             }
             
             const jobTitle = document.getElementById("jobTitle").value;
             const industry = document.getElementById("industry").value;
             const outputBox = document.getElementById("output");
-            
-            outputBox.value = "Generating...";
-            
+            outputBox.innerText = "Generating...";
+
             try {
                 const response = await fetch("/.netlify/functions/generate-bullets", {
                     method: "POST",
@@ -68,28 +118,27 @@
                 });
                 
                 const data = await response.json();
-                
-                if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
-                    throw new Error("Invalid bullet point format");
+                if (!data.bullet_points) {
+                    throw new Error("Invalid response from AI");
                 }
                 
-                outputBox.value = data.bullet_points.join("\n");
-                document.getElementById("copyButton").disabled = false;
-                
+                outputBox.innerText = data.bullet_points.join("\n");
+                document.getElementById("copyBtn").disabled = false;
                 usageCount++;
-                localStorage.setItem("usageCount", usageCount);
+                localStorage.setItem('usageCount', usageCount);
             } catch (error) {
+                outputBox.innerText = "Failed to generate bullet points. Try again.";
                 console.error("Error:", error);
-                outputBox.value = "Failed to generate bullet points. Try again.";
             }
         }
-        
+
         function copyToClipboard() {
             const outputBox = document.getElementById("output");
-            outputBox.select();
-            document.execCommand("copy");
-            alert("Bullet points copied to clipboard!");
+            navigator.clipboard.writeText(outputBox.value).then(() => {
+                alert("Copied to clipboard!");
+            }).catch(err => console.error("Failed to copy text: ", err));
         }
     </script>
+
 </body>
 </html>
