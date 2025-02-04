@@ -3,43 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generate professional resume bullet points instantly with our AI-powered Resume Bullet Point Generator.">
-    <meta name="keywords" content="resume bullet points, resume generator, AI resume, professional resume writing, job search">
+    <meta name="description" content="Generate powerful resume bullet points instantly with AI. Optimize your resume for any job title and industry.">
+    <meta name="keywords" content="resume bullet points, resume generator, AI resume, job application, resume writing, resume improvement">
     <meta name="author" content="ResumeBulletPoints.com">
     <meta property="og:title" content="Resume Bullet Point Generator">
-    <meta property="og:description" content="Generate professional resume bullet points instantly with AI.">
+    <meta property="og:description" content="Generate professional resume bullet points with AI. Improve your job applications instantly!">
     <meta property="og:url" content="https://resumebulletpoints.com">
     <meta property="og:type" content="website">
-    <link rel="canonical" href="https://resumebulletpoints.com">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <title>Resume Bullet Point Generator - AI-Powered Resume Builder</title>
+    <title>Resume Bullet Point Generator - AI Powered</title>
+    
+    <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1371238492071252" crossorigin="anonymous"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        input, button { margin: 10px; padding: 10px; font-size: 16px; }
-        .container { max-width: 600px; margin: auto; }
-        .notice { color: red; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 40px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+        }
+        #output {
+            display: block;
+            width: 80%;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            font-size: 16px;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+        .limit-notice {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        #copyBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #copyBtn:disabled {
+            background-color: #cccccc;
+        }
     </style>
 </head>
 <body>
     <h1>Resume Bullet Point Generator</h1>
-    <div class="container">
-        <label for="jobTitle">Job Title:</label>
-        <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
-        <label for="industry">Industry:</label>
-        <input type="text" id="industry" placeholder="e.g. Technology">
-        <button id="generateBtn" onclick="generateBulletPoints()">Generate</button>
-        <p class="notice">You can use the generator up to <strong>three</strong> times for free.</p>
-        <textarea id="output" rows="5" cols="50" readonly></textarea>
-        <button onclick="copyToClipboard()">Copy to Clipboard</button>
-    </div>
+    <label for="jobTitle">Job Title:</label>
+    <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
+    <label for="industry">Industry:</label>
+    <input type="text" id="industry" placeholder="e.g. Technology">
+    <button onclick="generateBulletPoints()">Generate</button>
+    <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
+    <p class="limit-notice">You can use the generator up to <b>three</b> times for free.</p>
+    <div id="output"></div>
 
     <script>
+        let usageCount = localStorage.getItem('usageCount') || 0;
+
         async function generateBulletPoints() {
+            if (usageCount >= 3) {
+                document.getElementById('output').innerText = "You've reached the free limit of 3 requests.";
+                return;
+            }
+            
             const jobTitle = document.getElementById("jobTitle").value;
             const industry = document.getElementById("industry").value;
             const outputBox = document.getElementById("output");
-            outputBox.value = "Generating...";
+            outputBox.innerText = "Generating...";
 
             try {
                 const response = await fetch("/.netlify/functions/generate-bullets", {
@@ -47,23 +85,27 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ jobTitle, industry })
                 });
+                
                 const data = await response.json();
-
-                if (!data.bullet_points || !Array.isArray(data.bullet_points)) {
-                    throw new Error("Invalid response format");
+                if (!data.bullet_points) {
+                    throw new Error("Invalid response from AI");
                 }
-                outputBox.value = data.bullet_points.join("\n");
+                
+                outputBox.innerText = data.bullet_points.join("\n");
+                document.getElementById("copyBtn").disabled = false;
+                usageCount++;
+                localStorage.setItem('usageCount', usageCount);
             } catch (error) {
+                outputBox.innerText = "Failed to generate bullet points. Try again.";
                 console.error("Error:", error);
-                outputBox.value = "Failed to generate bullet points. Try again.";
             }
         }
 
         function copyToClipboard() {
             const outputBox = document.getElementById("output");
-            outputBox.select();
-            document.execCommand("copy");
-            alert("Copied to clipboard!");
+            navigator.clipboard.writeText(outputBox.innerText).then(() => {
+                alert("Copied to clipboard!");
+            }).catch(err => console.error("Failed to copy text: ", err));
         }
     </script>
 </body>
