@@ -1,1 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Resume Bullet Points</title>
+</head>
+<body>
+    <h1>Blog</h1>
+    <div id="blog-posts"></div>
+
+    <script>
+        async function loadBlogPosts() {
+            const response = await fetch("/blog/index.json");
+            const posts = await response.json();
+            const container = document.getElementById("blog-posts");
+            posts.forEach(post => {
+                const article = document.createElement("article");
+                article.innerHTML = `<h2><a href="/blog/${post.slug}/">${post.title}</a></h2><p>${post.description}</p>`;
+                container.appendChild(article);
+            });
+        }
+        loadBlogPosts();
+    </script>
+</body>
+</html>
 
