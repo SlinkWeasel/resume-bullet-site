@@ -1,47 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
- <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SEO Optimization -->
-    <meta name="description" content="Generate powerful resume bullet points instantly with AI. Optimize your resume for any job title and industry. Perfect for job seekers and professionals looking to improve their resumes.">
-    <meta name="keywords" content="resume bullet points, resume generator, AI resume, job application, resume writing, career tips, job search, professional resume">
+    <meta name="description" content="Generate powerful resume bullet points instantly with AI. Optimize your resume for any job title and industry.">
+    <meta name="keywords" content="resume bullet points, resume generator, AI resume, job application, resume writing">
     <meta name="author" content="ResumeBulletPoints.com">
-    
-    <!-- Open Graph for Social Sharing -->
-    <meta property="og:title" content="Resume Bullet Point Generator | AI-Powered">
+    <meta property="og:title" content="Resume Bullet Point Generator">
     <meta property="og:description" content="Generate professional resume bullet points with AI. Improve your job applications instantly!">
     <meta property="og:url" content="https://resumebulletpoints.com">
     <meta property="og:type" content="website">
+    <title>Resume Bullet Point Generator | AI-Powered</title>
     
-    <!-- Title for Browser Tab -->
-    <title>Resume Bullet Point Generator | Free AI Resume Writer</title>
-
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1371238492071252" crossorigin="anonymous"></script>
-
+    
     <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-
-    <!-- Styles -->
+    <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 40px;
-            background-color: #f5f5f5;
+            background-color: #f8f8f8;
         }
-        h1 {
-            color: #333;
+        nav a {
+            margin: 10px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
         }
         input, button {
             margin: 10px;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+            padding: 10px;
         }
         #output {
             display: block;
@@ -53,8 +45,6 @@
             font-size: 16px;
             text-align: left;
             white-space: pre-wrap;
-            height: 120px;
-            overflow-y: auto;
         }
         .limit-notice {
             color: red;
@@ -68,47 +58,29 @@
             padding: 10px 20px;
             cursor: pointer;
             font-size: 16px;
-            border-radius: 5px;
         }
         #copyBtn:disabled {
             background-color: #cccccc;
         }
-        nav {
-            margin-bottom: 20px;
-        }
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #007bff;
-        }
     </style>
 </head>
 <body>
-
-    <!-- Navigation (For Blog Link) -->
     <nav>
         <a href="/">Home</a>
-        <a href="/blog/">Blog</a>
+        <a href="/blog/index.html">Blog</a>
         <a href="#" onclick="netlifyIdentity.open()">Login</a>
     </nav>
-
+    
     <h1>Resume Bullet Point Generator</h1>
-
     <label for="jobTitle">Job Title:</label>
     <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
-
     <label for="industry">Industry:</label>
     <input type="text" id="industry" placeholder="e.g. Technology">
-
     <button onclick="generateBulletPoints()">Generate</button>
     <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
-
     <p class="limit-notice">You can use the generator up to <b>three</b> times for free.</p>
-
-    <textarea id="output" readonly></textarea>
-
-    <!-- JavaScript -->
+    <div id="output"></div>
+    
     <script>
         let usageCount = localStorage.getItem('usageCount') || 0;
 
@@ -135,35 +107,22 @@
                     throw new Error("Invalid response from AI");
                 }
                 
-                outputBox.value = data.bullet_points.join("\n");
+                outputBox.innerText = data.bullet_points.join("\n");
                 document.getElementById("copyBtn").disabled = false;
                 usageCount++;
                 localStorage.setItem('usageCount', usageCount);
             } catch (error) {
-                outputBox.value = "Failed to generate bullet points. Try again.";
+                outputBox.innerText = "Failed to generate bullet points. Try again.";
                 console.error("Error:", error);
             }
         }
 
         function copyToClipboard() {
             const outputBox = document.getElementById("output");
-            navigator.clipboard.writeText(outputBox.value).then(() => {
+            navigator.clipboard.writeText(outputBox.innerText).then(() => {
                 alert("Copied to clipboard!");
             }).catch(err => console.error("Failed to copy text: ", err));
         }
-
-        // Netlify Identity Initialization
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.netlifyIdentity.on("login", () => {
-                        document.location.reload();
-                    });
-                }
-            });
-        }
     </script>
-
 </body>
 </html>
-
