@@ -2,50 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generate professional, keyword-optimized resume bullet points instantly with AI. Perfect for job seekers looking to enhance their resumes.">
-    <meta name="keywords" content="resume bullet points, resume generator, AI resume builder, job application, resume writing">
+    
+    <!-- SEO Optimization -->
+    <meta name="description" content="Generate powerful resume bullet points instantly with AI. Optimize your resume for any job title and industry. Perfect for job seekers and professionals looking to improve their resumes.">
+    <meta name="keywords" content="resume bullet points, resume generator, AI resume, job application, resume writing, career tips, job search, professional resume">
     <meta name="author" content="ResumeBulletPoints.com">
-    <meta property="og:title" content="Resume Bullet Point Generator - AI Powered">
-    <meta property="og:description" content="Boost your job application with AI-generated resume bullet points. Try it for free!">
+    
+    <!-- Open Graph for Social Sharing -->
+    <meta property="og:title" content="Resume Bullet Point Generator | AI-Powered">
+    <meta property="og:description" content="Generate professional resume bullet points with AI. Improve your job applications instantly!">
     <meta property="og:url" content="https://resumebulletpoints.com">
     <meta property="og:type" content="website">
-    <title>Resume Bullet Point Generator | Free AI Resume Writer</title>
     
+    <!-- Title for Browser Tab -->
+    <title>Resume Bullet Point Generator | Free AI Resume Writer</title>
+
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1371238492071252" crossorigin="anonymous"></script>
 
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <!-- Styles -->
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 40px;
-            background-color: #f8f9fa;
+            background-color: #f5f5f5;
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+        h1 {
+            color: #333;
         }
         input, button {
             margin: 10px;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         #output {
             display: block;
-            width: 100%;
-            height: 100px;
-            padding: 10px;
+            width: 80%;
+            margin: 20px auto;
+            padding: 15px;
             border: 1px solid #ccc;
-            background-color: #f9f9f9;
+            background-color: #fff;
             font-size: 16px;
             text-align: left;
             white-space: pre-wrap;
+            height: 120px;
             overflow-y: auto;
         }
         .limit-notice {
@@ -65,35 +72,55 @@
         #copyBtn:disabled {
             background-color: #cccccc;
         }
+        nav {
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Resume Bullet Point Generator</h1>
-        <p>Generate professional and impactful resume bullet points in seconds.</p>
-        <label for="jobTitle">Job Title:</label>
-        <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
-        <label for="industry">Industry:</label>
-        <input type="text" id="industry" placeholder="e.g. Technology">
-        <button onclick="generateBulletPoints()">Generate</button>
-        <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
-        <p class="limit-notice">You can use the generator up to <b>three</b> times for free.</p>
-        <textarea id="output" readonly></textarea>
-    </div>
 
+    <!-- Navigation (For Blog Link) -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="#" onclick="netlifyIdentity.open()">Login</a>
+    </nav>
+
+    <h1>Resume Bullet Point Generator</h1>
+
+    <label for="jobTitle">Job Title:</label>
+    <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
+
+    <label for="industry">Industry:</label>
+    <input type="text" id="industry" placeholder="e.g. Technology">
+
+    <button onclick="generateBulletPoints()">Generate</button>
+    <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
+
+    <p class="limit-notice">You can use the generator up to <b>three</b> times for free.</p>
+
+    <textarea id="output" readonly></textarea>
+
+    <!-- JavaScript -->
     <script>
         let usageCount = localStorage.getItem('usageCount') || 0;
 
         async function generateBulletPoints() {
             if (usageCount >= 3) {
-                document.getElementById('output').value = "You've reached the free limit of 3 requests.";
+                document.getElementById('output').innerText = "You've reached the free limit of 3 requests.";
                 return;
             }
             
             const jobTitle = document.getElementById("jobTitle").value;
             const industry = document.getElementById("industry").value;
             const outputBox = document.getElementById("output");
-            outputBox.value = "Generating...";
+            outputBox.innerText = "Generating...";
 
             try {
                 const response = await fetch("/.netlify/functions/generate-bullets", {
@@ -123,6 +150,19 @@
                 alert("Copied to clipboard!");
             }).catch(err => console.error("Failed to copy text: ", err));
         }
+
+        // Netlify Identity Initialization
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.reload();
+                    });
+                }
+            });
+        }
     </script>
+
 </body>
 </html>
+
