@@ -3,126 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Generate powerful resume bullet points instantly with AI. Optimize your resume for any job title and industry.">
-    <meta name="keywords" content="resume bullet points, resume generator, AI resume, job application, resume writing">
+    <meta name="description" content="Generate professional resume bullet points instantly with AI. Optimize your resume for any job title and industry.">
+    <meta name="keywords" content="resume bullet points, resume generator, AI resume, job application, resume writing, resume improvement">
     <meta name="author" content="ResumeBulletPoints.com">
-    <meta property="og:title" content="Resume Bullet Point Generator">
-    <meta property="og:description" content="Generate professional resume bullet points with AI. Improve your job applications instantly!">
-    <meta property="og:url" content="https://resumebulletpoints.com">
-    <meta property="og:type" content="website">
-    <title>Resume Bullet Point Generator | AI-Powered</title>
-    
-    <!-- Google AdSense -->
+    <title>Resume Bullet Point Generator | AI Resume Writer</title>
+    <link rel="stylesheet" href="styles.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1371238492071252" crossorigin="anonymous"></script>
-    
-    <!-- Netlify Identity Widget -->
-    <script defer src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 40px;
-            background-color: #f8f8f8;
-        }
-        nav a {
-            margin: 10px;
-            text-decoration: none;
-            color: #007bff;
-            font-size: 18px;
-        }
-        input, button {
-            margin: 10px;
-            padding: 10px;
-        }
-        #output {
-            display: block;
-            width: 80%;
-            margin: 20px auto;
-            padding: 15px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            font-size: 16px;
-            text-align: left;
-            white-space: pre-wrap;
-        }
-        .limit-notice {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        #copyBtn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        #copyBtn:disabled {
-            background-color: #cccccc;
-        }
-    </style>
 </head>
 <body>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/blog/index.html">Blog</a>
-        <a href="#" onclick="netlifyIdentity.open()">Login</a>
-    </nav>
+    <header>
+        <div class="container">
+            <h1>Resume Bullet Point Generator</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="blog/index.html">Blog</a></li>
+                    <li><a href="login.html">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
     
-    <h1>Resume Bullet Point Generator</h1>
-    <label for="jobTitle">Job Title:</label>
-    <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
-    <label for="industry">Industry:</label>
-    <input type="text" id="industry" placeholder="e.g. Technology">
-    <button onclick="generateBulletPoints()">Generate</button>
-    <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
-    <p class="limit-notice">You can use the generator up to <b>three</b> times for free.</p>
-    <div id="output"></div>
+    <section class="hero">
+        <div class="container">
+            <h2>Generate Professional Resume Bullet Points with AI</h2>
+            <p>Optimize your resume for any job title and industry in seconds.</p>
+        </div>
+    </section>
     
-    <script>
-        let usageCount = localStorage.getItem('usageCount') || 0;
-
-        async function generateBulletPoints() {
-            if (usageCount >= 3) {
-                document.getElementById('output').innerText = "You've reached the free limit of 3 requests.";
-                return;
-            }
-            
-            const jobTitle = document.getElementById("jobTitle").value;
-            const industry = document.getElementById("industry").value;
-            const outputBox = document.getElementById("output");
-            outputBox.innerText = "Generating...";
-
-            try {
-                const response = await fetch("/.netlify/functions/generate-bullets", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ jobTitle, industry })
-                });
-                
-                const data = await response.json();
-                if (!data.bullet_points) {
-                    throw new Error("Invalid response from AI");
-                }
-                
-                outputBox.innerText = data.bullet_points.join("\n");
-                document.getElementById("copyBtn").disabled = false;
-                usageCount++;
-                localStorage.setItem('usageCount', usageCount);
-            } catch (error) {
-                outputBox.innerText = "Failed to generate bullet points. Try again.";
-                console.error("Error:", error);
-            }
-        }
-
-        function copyToClipboard() {
-            const outputBox = document.getElementById("output");
-            navigator.clipboard.writeText(outputBox.innerText).then(() => {
-                alert("Copied to clipboard!");
-            }).catch(err => console.error("Failed to copy text: ", err));
-        }
-    </script>
+    <section class="generator">
+        <div class="container">
+            <label for="jobTitle">Job Title:</label>
+            <input type="text" id="jobTitle" placeholder="e.g. Software Engineer">
+            <label for="industry">Industry:</label>
+            <input type="text" id="industry" placeholder="e.g. Technology">
+            <button onclick="generateBulletPoints()">Generate</button>
+            <button id="copyBtn" onclick="copyToClipboard()" disabled>Copy to Clipboard</button>
+            <p class="limit-notice">You can use the generator up to <b>three</b> times for free.</p>
+            <textarea id="output" readonly></textarea>
+        </div>
+    </section>
+    
+    <section class="blog-preview">
+        <div class="container">
+            <h3>Latest Blog Posts</h3>
+            <div id="blog-posts"></div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 ResumeBulletPoints.com | <a href="privacy.html">Privacy Policy</a></p>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
 </body>
 </html>
